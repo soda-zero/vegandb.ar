@@ -15,7 +15,7 @@ type Category struct {
 }
 
 type Product struct {
-	ID         string
+	ID         int64
 	Name       string
 	CategoryID sql.NullInt64
 }

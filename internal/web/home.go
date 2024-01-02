@@ -2,11 +2,12 @@ package web
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 	"github.com/soda-zero/vegandb/internal/database"
 	"github.com/soda-zero/vegandb/internal/products"
 	"github.com/soda-zero/vegandb/www/home"
-	"net/http"
 )
 
 const (
@@ -51,7 +52,7 @@ func (h *HomeHandler) HandleListProducts(c echo.Context) error {
 	productsRepo := products.NewProductRepository(database.New(db))
 	h.filteredProducts, err = productsRepo.FilterProducts(context.Background(), h.filter)
 	if err != nil {
-		return err
+		return c.String(http.StatusOK, "Hay un problema con el servidor")
 	}
 
 	if hxRequestHeader == hxRequestHeaderValue {
@@ -66,4 +67,9 @@ func (h *HomeHandler) HandleListProducts(c echo.Context) error {
 		}
 		return render(c, home.App(h.filter, h.filteredProducts))
 	}
+}
+
+func (h *HomeHandler) HandleIGPost(c echo.Context) error {
+	url := "https://www.instagram.com/p/C1h7dEqhkP1/"
+	return render(c, home.InstagramPost(url))
 }

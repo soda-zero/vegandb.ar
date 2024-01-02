@@ -6,7 +6,7 @@ CREATE TABLE categories (
 );
 
 CREATE TABLE products (
-    id TEXT PRIMARY KEY,
+    id INTEGER PRIMARY KEY,
     name TEXT NOT NULL,
     category_id INT,
     FOREIGN KEY (category_id) REFERENCES categories(id)

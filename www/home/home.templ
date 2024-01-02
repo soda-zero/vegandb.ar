@@ -22,6 +22,7 @@ templ App(filter string, results []database.Product) {
 				</label>
 			</div>
 			@ProductsContainer(filter, results)
+			<button hx-get="/igpost" hx-target="body" hx-swap="beforeend">Open a Modal</button>
 		</main>
 	}
 }

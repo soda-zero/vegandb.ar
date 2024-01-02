@@ -21,7 +21,7 @@ func (r *ProductRepository) ListProducts(ctx context.Context) ([]database.Produc
 }
 
 // GetCategoryTreeForProduct retrieves the category tree for a given product ID.
-func (r *ProductRepository) GetCategoryTreeForProduct(ctx context.Context, productID string) ([]database.GetCategoryTreeRow, error) {
+func (r *ProductRepository) GetCategoryTreeForProduct(ctx context.Context, productID int64) ([]database.GetCategoryTreeRow, error) {
 	return r.queries.GetCategoryTree(ctx, productID)
 }
 

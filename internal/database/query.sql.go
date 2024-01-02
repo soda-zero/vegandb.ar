@@ -61,7 +61,7 @@ type GetCategoryTreeRow struct {
 	ParentCategoryID sql.NullInt64
 }
 
-func (q *Queries) GetCategoryTree(ctx context.Context, id string) ([]GetCategoryTreeRow, error) {
+func (q *Queries) GetCategoryTree(ctx context.Context, id int64) ([]GetCategoryTreeRow, error) {
 	rows, err := q.db.QueryContext(ctx, getCategoryTree, id)
 	if err != nil {
 		return nil, err
