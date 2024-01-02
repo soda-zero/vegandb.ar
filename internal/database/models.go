@@ -8,8 +8,14 @@ import (
 	"database/sql"
 )
 
-type Author struct {
-	ID   int64
-	Name string
-	Bio  sql.NullString
+type Category struct {
+	ID               int64
+	Name             string
+	ParentCategoryID sql.NullInt64
+}
+
+type Product struct {
+	ID         string
+	Name       string
+	CategoryID sql.NullInt64
 }

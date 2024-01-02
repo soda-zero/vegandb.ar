@@ -10,64 +10,39 @@ import (
 	"database/sql"
 )
 
-const createAuthor = `-- name: CreateAuthor :one
-INSERT INTO authors (
-  name, bio
-) VALUES (
-  ?, ?
+const getCategoryTree = `-- name: GetCategoryTree :many
+WITH RECURSIVE cte_categories (id, name, parent_category_id) AS (
+    SELECT c.id, c.name, c.parent_category_id
+    FROM categories c
+    JOIN products p ON c.id = p.category_id
+    WHERE p.id = ?
+
+    UNION ALL
+
+    SELECT c.id, c.name, c.parent_category_id
+    FROM categories c
+    JOIN cte_categories ct ON c.id = ct.parent_category_id
 )
-RETURNING id, name, bio
+
+SELECT id, name, parent_category_id FROM cte_categories
 `
 
-type CreateAuthorParams struct {
-	Name string
-	Bio  sql.NullString
+type GetCategoryTreeRow struct {
+	ID               int64
+	Name             string
+	ParentCategoryID sql.NullInt64
 }
 
-func (q *Queries) CreateAuthor(ctx context.Context, arg CreateAuthorParams) (Author, error) {
-	row := q.db.QueryRowContext(ctx, createAuthor, arg.Name, arg.Bio)
-	var i Author
-	err := row.Scan(&i.ID, &i.Name, &i.Bio)
-	return i, err
-}
-
-const deleteAuthor = `-- name: DeleteAuthor :exec
-DELETE FROM authors
-WHERE id = ?
-`
-
-func (q *Queries) DeleteAuthor(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, deleteAuthor, id)
-	return err
-}
-
-const getAuthor = `-- name: GetAuthor :one
-SELECT id, name, bio FROM authors
-WHERE id = ? LIMIT 1
-`
-
-func (q *Queries) GetAuthor(ctx context.Context, id int64) (Author, error) {
-	row := q.db.QueryRowContext(ctx, getAuthor, id)
-	var i Author
-	err := row.Scan(&i.ID, &i.Name, &i.Bio)
-	return i, err
-}
-
-const listAuthors = `-- name: ListAuthors :many
-SELECT id, name, bio FROM authors
-ORDER BY name
-`
-
-func (q *Queries) ListAuthors(ctx context.Context) ([]Author, error) {
-	rows, err := q.db.QueryContext(ctx, listAuthors)
+func (q *Queries) GetCategoryTree(ctx context.Context, id string) ([]GetCategoryTreeRow, error) {
+	rows, err := q.db.QueryContext(ctx, getCategoryTree, id)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Author
+	var items []GetCategoryTreeRow
 	for rows.Next() {
-		var i Author
-		if err := rows.Scan(&i.ID, &i.Name, &i.Bio); err != nil {
+		var i GetCategoryTreeRow
+		if err := rows.Scan(&i.ID, &i.Name, &i.ParentCategoryID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)
@@ -79,22 +54,4 @@ func (q *Queries) ListAuthors(ctx context.Context) ([]Author, error) {
 		return nil, err
 	}
 	return items, nil
-}
-
-const updateAuthor = `-- name: UpdateAuthor :exec
-UPDATE authors
-set name = ?,
-bio = ?
-WHERE id = ?
-`
-
-type UpdateAuthorParams struct {
-	Name string
-	Bio  sql.NullString
-	ID   int64
-}
-
-func (q *Queries) UpdateAuthor(ctx context.Context, arg UpdateAuthorParams) error {
-	_, err := q.db.ExecContext(ctx, updateAuthor, arg.Name, arg.Bio, arg.ID)
-	return err
 }

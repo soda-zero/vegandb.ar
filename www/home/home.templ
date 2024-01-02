@@ -1,0 +1,12 @@
+package home
+
+import "github.com/soda-zero/vegandb/www/layout"
+
+templ App() {
+	@layout.Base("Home Page") {
+		<main>
+			Hello World!
+			@Bye()
+		</main>
+	}
+}

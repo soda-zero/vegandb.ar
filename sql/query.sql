@@ -1,25 +1,15 @@
--- name: GetAuthor :one
-SELECT * FROM authors
-WHERE id = ? LIMIT 1;
+-- name: GetCategoryTree :many
+WITH RECURSIVE cte_categories (id, name, parent_category_id) AS (
+    SELECT c.id, c.name, c.parent_category_id
+    FROM categories c
+    JOIN products p ON c.id = p.category_id
+    WHERE p.id = ?
 
--- name: ListAuthors :many
-SELECT * FROM authors
-ORDER BY name;
+    UNION ALL
 
--- name: CreateAuthor :one
-INSERT INTO authors (
-  name, bio
-) VALUES (
-  ?, ?
+    SELECT c.id, c.name, c.parent_category_id
+    FROM categories c
+    JOIN cte_categories ct ON c.id = ct.parent_category_id
 )
-RETURNING *;
 
--- name: UpdateAuthor :exec
-UPDATE authors
-set name = ?,
-bio = ?
-WHERE id = ?;
-
--- name: DeleteAuthor :exec
-DELETE FROM authors
-WHERE id = ?;
+SELECT * FROM cte_categories;

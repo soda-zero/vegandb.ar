@@ -1,6 +1,13 @@
-CREATE TABLE authors (
-  id   INTEGER PRIMARY KEY,
-  name text    NOT NULL,
-  bio  text
+CREATE TABLE categories (
+    id   INTEGER PRIMARY KEY,
+    name TEXT NOT NULL,
+    parent_category_id INTEGER,
+    FOREIGN KEY(parent_category_id) REFERENCES categories(id)
 );
 
+CREATE TABLE products (
+    id TEXT PRIMARY KEY,
+    name TEXT NOT NULL,
+    category_id INT,
+    FOREIGN KEY (category_id) REFERENCES categories(id)
+);
