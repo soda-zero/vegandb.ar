@@ -17,3 +17,8 @@ WITH RECURSIVE cte_categories (id, name, parent_category_id) AS (
 )
 
 SELECT * FROM cte_categories;
+
+
+-- name: FilterProducts :many
+SELECT * FROM products
+WHERE name LIKE '%' || ? || '%' COLLATE NOCASE;

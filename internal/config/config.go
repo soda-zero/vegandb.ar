@@ -19,4 +19,3 @@ func GetConfig(environment string) Config {
 		DatabaseConnectionString: ConnectionStrings[environment],
 	}
 }
-

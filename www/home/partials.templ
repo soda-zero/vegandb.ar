@@ -1,6 +1,18 @@
 
 package home
 
-templ Bye() {
-	<footer>Bye</footer>
+import "github.com/soda-zero/vegandb/internal/database"
+
+templ SearchResults(filter string, results []database.Product) {
+	if filter != "" {
+		if (len(results) > 0) {
+			for _, result := range results {
+				<article>{ result.Name }</article>
+			}
+		} else {
+			<p>No products to display</p>
+		}
+	} else {
+		<p>Type a product</p>
+	}
 }

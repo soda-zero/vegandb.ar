@@ -1,12 +1,27 @@
 package home
 
 import "github.com/soda-zero/vegandb/www/layout"
+import "github.com/soda-zero/vegandb/internal/database"
 
-templ App() {
+templ App(filter string, results []database.Product) {
 	@layout.Base("Home Page") {
-		<main>
-			Hello World!
-			@Bye()
+		<main id="app" class="container">
+			<h1>Products</h1>
+			<div>
+				<label for="filter">
+					<input
+						id="filter"
+						name="filter"
+						hx-get="/search"
+						hx-sync="this:replace"
+						hx-trigger="keyup changed delay:500ms"
+						hx-target="#results"
+						hx-indicator="#progress"
+						hx-push-url="true"
+					/>
+				</label>
+			</div>
+			@ProductsContainer(filter, results)
 		</main>
 	}
 }

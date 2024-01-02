@@ -2,6 +2,7 @@ package products
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/soda-zero/vegandb/internal/database"
 )
@@ -22,4 +23,10 @@ func (r *ProductRepository) ListProducts(ctx context.Context) ([]database.Produc
 // GetCategoryTreeForProduct retrieves the category tree for a given product ID.
 func (r *ProductRepository) GetCategoryTreeForProduct(ctx context.Context, productID string) ([]database.GetCategoryTreeRow, error) {
 	return r.queries.GetCategoryTree(ctx, productID)
+}
+
+// GetFilterProducts retrieves the filtered products tree for a given product.
+func (r *ProductRepository) FilterProducts(ctx context.Context, filter string) ([]database.Product, error) {
+	nullFilter := sql.NullString{String: filter, Valid: filter != ""}
+	return r.queries.FilterProducts(ctx, nullFilter)
 }

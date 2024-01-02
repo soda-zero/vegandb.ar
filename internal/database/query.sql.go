@@ -10,6 +10,34 @@ import (
 	"database/sql"
 )
 
+const filterProducts = `-- name: FilterProducts :many
+SELECT id, name, category_id FROM products
+WHERE name LIKE '%' || ? || '%' COLLATE NOCASE
+`
+
+func (q *Queries) FilterProducts(ctx context.Context, dollar_1 sql.NullString) ([]Product, error) {
+	rows, err := q.db.QueryContext(ctx, filterProducts, dollar_1)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Product
+	for rows.Next() {
+		var i Product
+		if err := rows.Scan(&i.ID, &i.Name, &i.CategoryID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getCategoryTree = `-- name: GetCategoryTree :many
 WITH RECURSIVE cte_categories (id, name, parent_category_id) AS (
     SELECT c.id, c.name, c.parent_category_id

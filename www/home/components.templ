@@ -1,0 +1,12 @@
+package home
+
+import "github.com/soda-zero/vegandb/internal/database"
+
+templ ProductsContainer(filter string, results []database.Product) {
+	<section>
+		<progress class="htmx-indicator" id="progress"></progress>
+		<div id="results">
+			@SearchResults(filter, results)
+		</div>
+	</section>
+}
