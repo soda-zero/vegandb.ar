@@ -29,6 +29,7 @@
 
             # Dependencies
             gnumake
+            sqlite
             sqlc
             (templ system)
           ];
