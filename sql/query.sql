@@ -1,3 +1,7 @@
+-- name: ListProducts :many
+SELECT * FROM products
+ORDER BY name;
+
 -- name: GetCategoryTree :many
 WITH RECURSIVE cte_categories (id, name, parent_category_id) AS (
     SELECT c.id, c.name, c.parent_category_id
